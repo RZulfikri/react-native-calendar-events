@@ -76,13 +76,18 @@ RCT_EXPORT_MODULE()
 
 - (NSDictionary *)buildAndSaveEvent:(NSDictionary *)details options:(NSDictionary *)options
 {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
+    NSString *startDateString = [RCTConvert NSString:details[_startDate]];
+    NSString *endDateString = [RCTConvert NSString:details[_endDate]];
+    
     EKEvent *calendarEvent = nil;
     NSString *calendarId = [RCTConvert NSString:details[_calendarId]];
     NSString *eventId = [RCTConvert NSString:details[_id]];
     NSString *title = [RCTConvert NSString:details[_title]];
     NSString *location = [RCTConvert NSString:details[_location]];
-    NSDate *startDate = [RCTConvert NSDate:details[_startDate]];
-    NSDate *endDate = [RCTConvert NSDate:details[_endDate]];
+    NSDate *startDate = [dateFormatter dateFromString:startDateString];
+    NSDate *endDate = [dateFormatter dateFromString:endDateString];
     NSNumber *allDay = [RCTConvert NSNumber:details[_allDay]];
     NSString *notes = [RCTConvert NSString:details[_notes]];
     NSString *url = [RCTConvert NSString:details[_url]];
@@ -185,8 +190,13 @@ RCT_EXPORT_MODULE()
 
 - (NSDictionary *)saveEvent:(EKEvent *)calendarEvent options:(NSDictionary *)options
 {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
+    NSString *exceptionDateString = [RCTConvert NSString:options[@"exceptionDate"]];
+    
     NSMutableDictionary *response = [NSMutableDictionary dictionaryWithDictionary:@{@"success": [NSNull null], @"error": [NSNull null]}];
-    NSDate *exceptionDate = [RCTConvert NSDate:options[@"exceptionDate"]];
+    NSDate *exceptionDate = [dateFormatter dateFromString:exceptionDateString];
+
     EKSpan eventSpan = EKSpanFutureEvents;
 
     if (exceptionDate) {
